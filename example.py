@@ -1,4 +1,4 @@
-from SiriAPI import *
+from SiriAPI8.SiriAPI import *
 
 siriAPI = SiriAPI("my_email@me.com", "my_password")
 siriAPI.connect()
