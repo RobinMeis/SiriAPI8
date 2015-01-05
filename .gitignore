@@ -52,3 +52,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#Protect credentials from upload ;)
+icloud.passwd
