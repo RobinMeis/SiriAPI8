@@ -14,8 +14,10 @@ class SiriAPI:
         self.stop = True
 
     def set_keyword(self, keyword="iPhone"):
-        self.keyword = keyword
-        return (True)
+        if (isinstance(keyword, str)):
+            self.keyword = keyword
+        else:
+            raise Exception("Keyword has to be a string")
 
     def version(self):
         return(version)
