@@ -34,7 +34,10 @@ class SiriAPI:
         self.connection.login(self.username, self.password)
         self.connection.select("Notes")
 
-        typ, data = self.connection.search(None, 'BODY', self.keyword) #Delete old commands with keyword (TODO: deal with option in future)
+        typ, data = self.connection.search(None, 'FROM', '"robin"')
+        print(data)
+        typ, data = self.connection.search(None, 'ALL', 'SUBJECT "' + self.keyword + '"') #Delete old commands with keyword (TODO: deal with option in future)
+        print (data)
         for num in data[0].split():
             self.connection.store(num, '+FLAGS', '\\Deleted')
         self.connection.expunge()
@@ -53,12 +56,19 @@ class SiriAPI:
     def __thread(self):
         time.sleep(1)
         while (self.stop == False):
-            if (self.connection.recent()[1][0] != None):
+            recent = self.connection.recent()
+            if (recent[1][0] != None):
+                print ("BP0")
                 time.sleep(1) #Sleeps prevent crashes (crazy and I don't know why)
-                typ, data = self.connection.search(None, 'BODY', self.keyword) #Delete old commands with keyword (TODO: deal with option in future)
+                typ, data = self.connection.search(None, 'ALL', 'SUBJECT "' + self.keyword + '"') #Delete old commands with keyword (TODO: deal with option in future)
+                print ("BP1")
+                print (typ)
+                print (data)
                 for num in data[0].split():
+                    print ("BP2")
                     raw_email = self.connection.fetch(num, '(RFC822)')[1][0][1]
                     email_message = email.message_from_bytes(raw_email)
+                    print ("BP3")
                     if email_message.is_multipart():
                         for payload in email_message.get_payload():
                             # if payload.is_multipart(): ...
@@ -67,9 +77,10 @@ class SiriAPI:
                         text = email_message.get_payload()
 
                     text = text.replace("\n","").replace("\r","")
+                    #print (text)
                     if (text == "iPhone beenden"):
                         print("beenden")
-                    print (text)
+                    #print (text)
                     self.__search.search(text)
                     time.sleep(1)
                     self.connection.store(num, '+FLAGS', '\\Deleted')
