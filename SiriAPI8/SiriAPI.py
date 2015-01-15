@@ -11,7 +11,7 @@ class SiriAPI:
         self.username = username
         self.password = password
         self.keyword = "iphone"
-        self.version = "8.0.0" #TODO: Change version number on new release
+        self.version = "0.0.0" #TODO: Change version number on new release
         self.connection = None
         self.thread = None
         self.stop = True
@@ -30,8 +30,17 @@ class SiriAPI:
 
     def connect(self):
         self.stop = False
-        self.connection = imaplib.IMAP4_SSL("imap.mail.me.com", "993") #Connect to server
-        self.connection.login(self.username, self.password)
+
+        try:
+            self.connection = imaplib.IMAP4_SSL("imap.mail.me.com", "993") #Connect to server
+        except:
+            raise Exception("Connection to iCloud failed. Check your internet connection")
+
+        try:
+            self.connection.login(self.username, self.password) #Login
+        except:
+            raise Exception("Login to iCloud failed. Check user credentials")
+
         self.connection.select("Notes")
 
         #typ, data = self.connection.search(None, 'FROM', '"' + self.username + '"') #TODO: Dummy request, enable again if problems occour
@@ -48,10 +57,13 @@ class SiriAPI:
         return (self.version)
 
     def disconnect(self):
-        self.stop = True
-        self.thread.join()
-        self.connection.logout()
-        self.connection = None
+        if (self.stop == False):
+            self.stop = True
+            self.thread.join()
+
+        if (self.connection != None):
+            self.connection.logout()
+            self.connection = None
         return (True)
 
     def __thread(self):
