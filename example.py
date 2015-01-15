@@ -1,14 +1,13 @@
 from SiriAPI8.SiriAPI import *
 
-def hello (q, wildcards): #Here could react you script
-    print ("Q: " + q)
-    print (wildcards)
+def hello(q, wildcards): #Answer function
+    print ("You said Hello to " + wildcards[0])
 
-siriAPI = SiriAPI("my_icloud_mail@me.com", "my_password")
+SiriAPI = SiriAPI("icloud_mail@me.com", "Password") #Create SiriAPI8 object
 
-siriAPI.action.add([['hello', '*']], hello)
-siriAPI.connect()
+SiriAPI.action.add([['hello', '*'], hello) #Add answer function for hello *
 
-print (siriAPI.action.list())
+SiriAPI.connect() #Connect to iCloud
+
 input("Press any key...\n")
-siriAPI.disconnect()
+SiriAPI.disconnect() #Close connection
