@@ -11,7 +11,7 @@ class SiriAPI:
         self.username = username
         self.password = password
         self.keyword = "iphone"
-        self.version = "1.0.4" #TODO: Change version number on new release
+        self.version = "1.0.5" #TODO: Change version number on new release
         self.connection = None
         self.fetch = None
         self.stop = True
