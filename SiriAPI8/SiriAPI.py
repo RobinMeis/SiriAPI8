@@ -28,7 +28,7 @@ class SiriAPI:
     def version(self):
         return(version)
 
-    def connect(self):
+    def connect(self, start_thread=True):
         self.stop = False
 
         try:
@@ -49,8 +49,10 @@ class SiriAPI:
         for num in data[0].split():
             self.connection.store(num, '+FLAGS', '\\Deleted')
         self.connection.expunge()
-        self.fetch = threading.Thread(target=self.__fetch)
-        self.fetch.start()
+
+        if (start_thread == True):
+            self.fetch = threading.Thread(target=self.__fetch)
+            self.fetch.start()
         return (True)
 
     def get_version(self): #TODO: Reorder
@@ -70,26 +72,38 @@ class SiriAPI:
     def __fetch(self):
         time.sleep(1)
         while (self.stop == False):
-            recent = self.connection.recent() #Check for new notes
-            if (recent[1][0] != None):
-                time.sleep(1) #Sleeps prevent crashes (crazy and I don't know why)
-                typ, data = self.connection.search(None, 'ALL', 'SUBJECT "' + self.keyword + '"') #Fetch new notes
-                for num in data[0].split():
-                    raw_email = self.connection.fetch(num, '(RFC822)')[1][0][1]
-                    email_message = email.message_from_bytes(raw_email)
-                    if email_message.is_multipart(): #Parse content
-                        for payload in email_message.get_payload():
-                            text = payload.get_payload()
-                    else:
-                        text = email_message.get_payload()
+            try:
+                recent = self.connection.recent() #Check for new notes
+                if (recent[1][0] != None):
+                    time.sleep(1) #Sleeps prevent crashes (crazy and I don't know why)
+                    typ, data = self.connection.search(None, 'ALL', 'SUBJECT "' + self.keyword + '"') #Fetch new notes
+                    for num in data[0].split():
+                        raw_email = self.connection.fetch(num, '(RFC822)')[1][0][1]
+                        email_message = email.message_from_bytes(raw_email)
+                        if email_message.is_multipart(): #Parse content
+                            for payload in email_message.get_payload():
+                                text = payload.get_payload()
+                        else:
+                            text = email_message.get_payload()
 
-                    self.connection.store(num, '+FLAGS', '\\Deleted')
-                    self.connection.expunge()
-                    text = text.replace("\n","").replace("\r","")
-                    self.__search.search(text)
-                    time.sleep(1)
-            self.connection.noop()
-            time.sleep(1)
+                        self.connection.store(num, '+FLAGS', '\\Deleted')
+                        self.connection.expunge()
+                        text = text.replace("\n","").replace("\r","")
+                        self.__search.search(text)
+                        time.sleep(1)
+                self.connection.noop()
+                time.sleep(1)
+            except: #Reconnect handler if connection is closed
+                print("Connection failure")
+                try:
+                    self.connection.logout()
+                    print("Logout succesful")
+                except:
+                    print("Couldn't logout")
+                self.connection = False
+                print("Trying to reconnect")
+                self.connect(False)
+                print("Reconnected")
         return()
 
     def __connection_check(self):
