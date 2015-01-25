@@ -7,11 +7,11 @@ from .action import action
 from .search import search
 
 class SiriAPI:
-    def __init__(self, username, password): #TODO: Implement error handling
+    def __init__(self, username, password):
         self.username = username
         self.password = password
         self.keyword = "iphone"
-        self.version = "1.0.5" #TODO: Change version number on new release
+        self.version = "8.0.0" #TODO: Change version number on new release
         self.connection = None
         self.fetch = None
         self.stop = True
@@ -24,9 +24,6 @@ class SiriAPI:
             self.keyword = keyword.lower()
         else:
             raise Exception("Keyword has to be a string")
-
-    def version(self):
-        return(version)
 
     def connect(self, start_thread=True):
         self.stop = False
@@ -43,7 +40,6 @@ class SiriAPI:
 
         self.connection.select("Notes")
 
-        #typ, data = self.connection.search(None, 'FROM', '"' + self.username + '"') #TODO: Dummy request, enable again if problems occour
         typ, data = self.connection.search(None, 'ALL', 'SUBJECT "' + self.keyword + '"') #Delete unhandled commands with keyword (TODO: deal with alternative execution in future)
 
         for num in data[0].split():
@@ -55,14 +51,10 @@ class SiriAPI:
             self.fetch.start()
         return (True)
 
-    def get_version(self): #TODO: Reorder
-        return (self.version)
-
     def disconnect(self):
         if (self.stop == False):
             self.stop = True
             self.fetch.join()
-            #self.connection_check.join()
 
         if (self.connection != None):
             self.connection.logout()
@@ -106,7 +98,5 @@ class SiriAPI:
                 print("Reconnected")
         return()
 
-    def __connection_check(self):
-        while (self.stop == False):
-
-            time.sleep(10)
+    def get_version(self):
+        return (self.version)

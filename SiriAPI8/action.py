@@ -8,7 +8,7 @@ class action: #Stores actions for SiriAPI8
         self.actions.append({'find': [find], 'call': call})
         return (len(self.actions) - 1)
 
-    def modify (self, id, find, call): #Modify action by id TODO: Add default and add to documentation
+    def modify (self, id, find, call): #Modify action by id
         try:
             if (find == -1): #Keep old values if not overwritten
                 find = self.actions[id]['find']
