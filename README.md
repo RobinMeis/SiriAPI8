@@ -14,4 +14,5 @@ Installation
 The installation instructions can be found in the wiki. In comparision to the original SiriAPI they decreased to a few commands. If you have any problem or found bugs, please report them in the Issue tracker.
 
 Instructions: https://github.com/HcDevel/SiriAPI8/wiki/Installation
+
 Issues: https://github.com/HcDevel/SiriAPI8/issues
