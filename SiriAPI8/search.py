@@ -4,7 +4,6 @@ class search:
 
     def search (self, q): #search for matching
         q_search = q.lower().replace(self.SiriAPI.keyword + " ", "")
-        print (q_search)
         for keywords in self.SiriAPI.action.actions[:]: #Complicated search algorithm ;)
             for keyword in keywords['find'][:]:
                 for find in keyword[:]:
