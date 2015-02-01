@@ -4,7 +4,7 @@ def hello(q, wildcards): #Answer function
     print ("You said Hello to " + wildcards[0])
 
 SiriAPI = SiriAPI("icloud_mail@me.com", "Password") #Create SiriAPI8 object
-print(get_version())
+print(SiriAPI.get_version())
 
 SiriAPI.action.add([['hello', '*']], hello) #Add answer function for hello *
 
