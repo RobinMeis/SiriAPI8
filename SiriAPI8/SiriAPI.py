@@ -87,24 +87,27 @@ class SiriAPI:
                         text = text.replace("\n","").replace("\r","")
                         self.__search.search(text)
                         time.sleep(1)
+                        adsad
                 self.connection.noop()
                 time.sleep(1)
-            except: #Reconnect handler if connection is closed
-                print("Connection failure")
-                try:
-                    self.connection.logout()
-                    print("Logout succesful")
-                except:
-                    print("Couldn't logout")
-                self.connection = False
-                print("Trying to reconnect")
-                try:
-                    self.connect(False)
-                except:
-                    print("Reconnect failed")
-                    time.sleep(5)
-                else:
-                    print("Reconnected")
+            except socket.timeout: #Reconnect handler if connection is closed
+                while (self.stop == False):
+                    print("Connection failure")
+                    try:
+                        self.connection.logout()
+                        print("Logout succesful")
+                    except:
+                        print("Couldn't logout")
+                    self.connection = False
+                    print("Trying to reconnect")
+                    try:
+                        self.connect(False)
+                    except:
+                        print("Reconnect failed")
+                        time.sleep(5)
+                    else:
+                        print("Reconnected")
+                        break
         return()
 
     def get_version(self):
