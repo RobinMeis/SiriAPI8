@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 class search:
     def __init__ (self, SiriAPI):
         self.SiriAPI = SiriAPI

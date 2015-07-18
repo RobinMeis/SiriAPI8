@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 class action: #Stores actions for SiriAPI8
     def __init__ (self):
         self.actions = []
