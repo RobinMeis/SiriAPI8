@@ -2,6 +2,7 @@ import imaplib
 import email
 import time
 import threading
+import re
 
 from .action import action
 from .search import search
@@ -67,7 +68,7 @@ class SiriAPI:
             try:
                 recent = self.connection.recent() #Check for new notes
                 if (recent[1][0] != None):
-                    time.sleep(1) #Sleeps prevent crashes (crazy and I don't know why)
+                    time.sleep(1)
                     typ, data = self.connection.search(None, 'ALL', 'SUBJECT "' + self.keyword + '"') #Fetch new notes
                     for num in data[0].split():
                         raw_email = self.connection.fetch(num, '(RFC822)')[1][0][1]
@@ -77,7 +78,7 @@ class SiriAPI:
                                 text = payload.get_payload()
                         else:
                             text = email_message.get_payload()
-
+                        text = re.sub("<(.|\n)*?>", '', text)
                         self.connection.store(num, '+FLAGS', '\\Deleted')
                         self.connection.expunge()
                         text = text.replace("\n","").replace("\r","")
