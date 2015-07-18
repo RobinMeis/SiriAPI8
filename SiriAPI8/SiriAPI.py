@@ -1,4 +1,5 @@
 import imaplib
+import socket
 import email
 import time
 import threading
@@ -6,6 +7,8 @@ import re
 
 from .action import action
 from .search import search
+
+socket.setdefaulttimeout(2)
 
 class SiriAPI:
     def __init__(self, username, password):
@@ -95,8 +98,13 @@ class SiriAPI:
                     print("Couldn't logout")
                 self.connection = False
                 print("Trying to reconnect")
-                self.connect(False)
-                print("Reconnected")
+                try:
+                    self.connect(False)
+                except:
+                    print("Reconnect failed")
+                    time.sleep(5)
+                else:
+                    print("Reconnected")
         return()
 
     def get_version(self):
