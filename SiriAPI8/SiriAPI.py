@@ -1,17 +1,24 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import imaplib
+import socket
 import email
 import time
 import threading
+import re
 
 from .action import action
 from .search import search
+
+socket.setdefaulttimeout(2)
 
 class SiriAPI:
     def __init__(self, username, password):
         self.username = username
         self.password = password
         self.keyword = "iphone"
-        self.version = "8.0.1" #TODO: Change version number on new release
+        self.version = "8.0.2" #TODO: Change version number on new release
         self.connection = None
         self.fetch = None
         self.stop = True
@@ -67,7 +74,7 @@ class SiriAPI:
             try:
                 recent = self.connection.recent() #Check for new notes
                 if (recent[1][0] != None):
-                    time.sleep(1) #Sleeps prevent crashes (crazy and I don't know why)
+                    time.sleep(1)
                     typ, data = self.connection.search(None, 'ALL', 'SUBJECT "' + self.keyword + '"') #Fetch new notes
                     for num in data[0].split():
                         raw_email = self.connection.fetch(num, '(RFC822)')[1][0][1]
@@ -77,7 +84,7 @@ class SiriAPI:
                                 text = payload.get_payload()
                         else:
                             text = email_message.get_payload()
-
+                        text = re.sub("<(.|\n)*?>", '', text)
                         self.connection.store(num, '+FLAGS', '\\Deleted')
                         self.connection.expunge()
                         text = text.replace("\n","").replace("\r","")
@@ -85,17 +92,24 @@ class SiriAPI:
                         time.sleep(1)
                 self.connection.noop()
                 time.sleep(1)
-            except: #Reconnect handler if connection is closed
-                print("Connection failure")
-                try:
-                    self.connection.logout()
-                    print("Logout succesful")
-                except:
-                    print("Couldn't logout")
-                self.connection = False
-                print("Trying to reconnect")
-                self.connect(False)
-                print("Reconnected")
+            except socket.timeout: #Reconnect handler if connection is closed
+                while (self.stop == False):
+                    print("Connection failure")
+                    try:
+                        self.connection.logout()
+                        print("Logout succesful")
+                    except:
+                        print("Couldn't logout")
+                    self.connection = False
+                    print("Trying to reconnect")
+                    try:
+                        self.connect(False)
+                    except:
+                        print("Reconnect failed")
+                        time.sleep(5)
+                    else:
+                        print("Reconnected")
+                        break
         return()
 
     def get_version(self):

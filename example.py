@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from SiriAPI8.SiriAPI import *
 
 def hello(q, wildcards): #Answer function
