@@ -1,3 +1,4 @@
+#SiriAPI8 Does not work on iOS 9
 SiriAPI8
 ========
 SiriAPI8 opens Siri for your own purposes. You can use it to redirect any Siri command to any computer (Windows, Linux and Mac OS) without a Jailbreak. This is the only API that works with iOS8. In opposite to previous implementations you don't even need to be in your homes network! When your server is running, you can use SiriAPI8.
